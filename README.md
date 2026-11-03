@@ -47,7 +47,37 @@ ripeat assess git node ripgrep  # how risky it is, and why
 ripeat find lazygit             # where a tool you want could come from
 ```
 
-When you are ready, `ripeat install git node` installs, and `ripeat rollback` undoes the last run.
+When you are ready, `ripeat install git node` shows the plan and asks before it changes anything (`--yes` skips the question), and `ripeat rollback` undoes the last run. A tool ripeat has no recipe for is looked up and offered to you to add; ripeat shows the recipe and saves it only if you agree.
+
+## Keeping it current
+
+```bash
+ripeat version --check          # is a newer release out, and how to upgrade
+ripeat recipes check            # do the recipes still point at packages that exist
+```
+
+Upgrade with `brew update && brew upgrade ripeat/tap/ripeat` (macOS, Linux) or `scoop update ripeat` (Windows).
+
+## Share a setup
+
+```bash
+ripeat profile save web ripeat.yaml            # keep a list of tools under a name
+ripeat profile export web web.yaml             # write it to a file to share (tool names only, no commands)
+ripeat profile import web.yaml                 # someone else saves it (a file or an https:// address)
+```
+
+A shared list only names tools; importing it runs nothing. Check it with `ripeat assess --profile web` before installing.
+
+## Recipe packs
+
+A team or a community can share recipes as a GitHub repository with a `recipes/` folder:
+
+```bash
+ripeat tap add owner/repo      # shows what is in it, asks, and pins it to that commit
+ripeat tap update              # shows exactly what changed since, and asks
+```
+
+A pack cannot replace a built-in recipe or one of your own, and a recipe that runs shell commands is refused unless you allow it.
 
 ## Programs installed from a download
 
@@ -59,11 +89,13 @@ Most tools install through your system's package manager. Some (like ripgrep) ar
 
 ## Use it from an AI assistant
 
-ripeat can run as an MCP server, so an assistant such as Claude or Codex can look things up, build a plan and rate its risk for you. It cannot install anything: you run the install yourself.
+ripeat can run as an MCP server, so an assistant such as Claude or Codex can look things up, build a plan and rate its risk for you. It cannot install anything: you run the install yourself. For a tool with no recipe it can ask ripeat to prepare one as a draft; the draft does nothing until you read it and run `ripeat drafts approve <name>` in a terminal.
 
 ```bash
 claude mcp add --scope user ripeat -- ripeat mcp
 ```
+
+If you want the assistant to be able to install too, register it with `--allow-run` (add it after `ripeat mcp`). Nothing runs on the assistant's word: your own app shows a confirmation for every run, and ripeat refuses a high-risk plan and any step that needs administrator rights.
 
 ## Download by hand
 
