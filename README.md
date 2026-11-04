@@ -4,6 +4,8 @@ Set up a development machine from a list of tools, and undo it safely. Works on 
 
 This repository holds the downloads and checksums for each release. The source code is in a private repository.
 
+**Documentation: https://ripeat.github.io** (getting started, every command, how risk is rated, and how to connect an AI assistant).
+
 ## Install
 
 **macOS and Linux** (Homebrew):
@@ -61,7 +63,8 @@ Upgrade with `brew update && brew upgrade ripeat/tap/ripeat` (macOS, Linux) or `
 ## Share a setup
 
 ```bash
-ripeat profile save web ripeat.yaml            # keep a list of tools under a name
+ripeat profile create web git node ripgrep   # write a new list in your editor (typing just `ripeat` also asks)
+ripeat profile save web ripeat.yaml            # or keep a list you wrote in a file under a name
 ripeat profile export web web.yaml             # write it to a file to share (tool names only, no commands)
 ripeat profile import web.yaml                 # someone else saves it (a file or an https:// address)
 ```
@@ -74,6 +77,7 @@ A team or a community can share recipes as a GitHub repository with a `recipes/`
 
 ```bash
 ripeat tap add owner/repo      # shows what is in it, asks, and pins it to that commit
+ripeat tap add https://host/pack.yaml   # a pack on any host, pinned by its SHA-256
 ripeat tap update              # shows exactly what changed since, and asks
 ```
 
@@ -89,13 +93,13 @@ Most tools install through your system's package manager. Some (like ripgrep) ar
 
 ## Use it from an AI assistant
 
-ripeat can run as an MCP server, so an assistant such as Claude or Codex can look things up, build a plan and rate its risk for you. It cannot install anything: you run the install yourself. For a tool with no recipe it can ask ripeat to prepare one as a draft; the draft does nothing until you read it and run `ripeat drafts approve <name>` in a terminal.
+ripeat can run as an MCP server, so an assistant such as Claude or Codex can look things up, build a plan and rate its risk for you. By default it cannot install anything: you run the install yourself. For a tool with no recipe it can ask ripeat to prepare one as a draft; the draft does nothing until you read it and run `ripeat drafts approve <name>` in a terminal.
 
 ```bash
-claude mcp add --scope user ripeat -- ripeat mcp
+ripeat mcp setup --client claude-code      # or claude-desktop, or codex: shows the change, keeps a backup, asks first
 ```
 
-If you want the assistant to be able to install too, register it with `--allow-run` (add it after `ripeat mcp`). Nothing runs on the assistant's word: your own app shows a confirmation for every run, and ripeat refuses a high-risk plan and any step that needs administrator rights.
+If you want the assistant to be able to install too, add `--allow-run` to that command. Nothing runs on the assistant's word: your own app shows a confirmation for every run, and ripeat refuses a high-risk plan and any step that needs administrator rights.
 
 ## Download by hand
 
@@ -109,4 +113,4 @@ shasum -a 256 -c checksums.txt --ignore-missing      # macOS and Linux
 Get-FileHash .\ripeat_<version>_windows_amd64.zip -Algorithm SHA256   # compare with checksums.txt
 ```
 
-Programs downloaded in a browser are not signed yet, so Windows SmartScreen or macOS Gatekeeper may warn about them. Installing with Homebrew or Scoop avoids that.
+Programs downloaded in a browser are not signed (ripeat does not do code signing), so Windows SmartScreen or macOS Gatekeeper may warn about them. Installing with Homebrew or Scoop avoids that.
